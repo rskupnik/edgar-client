@@ -54,16 +54,16 @@ final class Connection extends Thread {
     }
 
     void disconnect() {
-        new SendPacketTask().execute(new Object[] {0});
+        new SendPacketTask().execute(new Object[] {1});
         exit = true;
     }
 
     void sendCommand(String cmd) {
-        new SendPacketTask().execute(new Object[]{1, cmd});
+        new SendPacketTask().execute(new Object[]{2, cmd});
     }
 
     void handshake() {
-        new SendPacketTask().execute(new Object[]{2});
+        new SendPacketTask().execute(new Object[]{3});
     }
 
     class SocketConnectTask extends AsyncTask<String, Void, Socket> {
@@ -87,13 +87,13 @@ final class Connection extends Thread {
             for (Object[] paramsUnit : params) {
                 int id = (int) paramsUnit[0];
                 switch (id) {
-                    case 0:
+                    case 1:
                         sendDisconnectPacket(id);
                         break;
-                    case 1:
+                    case 2:
                         sendCommandPacket(id, (String) paramsUnit[1]);
                         break;
-                    case 2:
+                    case 3:
                         sendHandshakePacket(id);
                         break;
                     default:
@@ -106,6 +106,7 @@ final class Connection extends Thread {
 
         private void sendHandshakePacket(int id) {
             try {
+                System.out.println("Sending packet with id: "+id);
                 outputStream.write(id);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -114,6 +115,7 @@ final class Connection extends Thread {
 
         private void sendDisconnectPacket(int id) {
             try {
+                System.out.println("Sending packet with id: "+id);
                 outputStream.write(id);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -122,6 +124,7 @@ final class Connection extends Thread {
 
         private void sendCommandPacket(int id, String cmd) {
             try {
+                System.out.println("Sending packet with id: "+id);
                 outputStream.write(id);
                 outputStream.writeUTF(cmd);
             } catch (IOException e) {
